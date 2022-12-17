@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import { Form, Field } from 'formik';
 
-export const FormContacts = styled(Form)`
+export const FormContacts = styled.form`
 display: flex;
 flex-direction: column;
 width: 400px;
@@ -9,7 +8,7 @@ border: ${p => p.theme.borders.normal};
  
 `;
 
-export const Input = styled(Field)`
+export const Field = styled.input`
   display: block;
   margin-top: ${p => p.theme.space[3]}px;
   height: 30px;
@@ -19,7 +18,7 @@ export const Input = styled(Field)`
   border-radius: ${props => props.theme.radii.normal};
 `;
 
-export const NameInput = styled.label`
+export const NameField = styled.label`
   color: ${p => p.theme.colors.text};
   font-size: ${props => props.theme.fontSizes[5]}px;
   margin-bottom: ${p => p.theme.space[2]}px;

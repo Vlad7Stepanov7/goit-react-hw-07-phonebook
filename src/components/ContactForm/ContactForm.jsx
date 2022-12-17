@@ -1,56 +1,48 @@
-import { Formik } from 'formik';
-import { FormContacts, Input, NameInput, ButtonAdd } from './ContactForm.styled';
-import { nanoid } from 'nanoid';
-import { useDispatch } from 'react-redux';
-import { addContact } from 'redux/contacts/contactsSlice';
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { FormContacts, Field, NameField, ButtonAdd } from './ContactForm.styled';
+import { addContact } from "redux/contacts/operations";
+
 
 const ContactForm = () => {
     const dispatch = useDispatch();
+    const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+        name: '',
+        number: ''
+    }});
     
-     
-    const handleSubmit = (values, { resetForm }) => {
+    const onSubmit = values => {
         const { name, number } = values;
-
-        dispatch(addContact({
-            id: nanoid(),
-            name,
-            number
-        }))
-          resetForm();
+        dispatch(addContact({name, number}))
+        reset();
     }
     
-    const initialValues = {
-            name: '',
-            number: ''
-    }
+   
     
     return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            >           
-        <FormContacts>
-           <NameInput htmlFor="name"> Name
-            <Input
+       
+        <FormContacts onSubmit={handleSubmit(onSubmit)}>
+           <NameField> Name
+                <Field
+                    {...register("name")}
                 type="text"
-                name="name"
                 pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
                 title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 required
                 />
-            </NameInput>
-            <NameInput htmlFor="number"> Number
-                <Input
+            </NameField>
+            <NameField > Number
+                <Field
+                    {...register("number")}
                 type="tel"
-                name="number"
                 pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
                 title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                 required
                />
-            </NameInput>
+            </NameField>
             <ButtonAdd type="submit">Add contact</ButtonAdd>
             </FormContacts>
-            </Formik>
     )
 }
 
