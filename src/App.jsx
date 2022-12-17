@@ -1,7 +1,8 @@
 import Box from "./utils/Box";
-import ContactForm from "./components/ContactForm/ContactForm";
+import ContactForm from "components/ContactForm/ContactForm";
 import ContactList from "./components/ContactList/ContactList";
 import Filter from "./components/Filter/Filter";
+import Loader from "components/Loader/Loader";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from "react";
@@ -18,7 +19,9 @@ export const App = () => {
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch])
-  
+
+  const loadingContacts = contacts && !error && !isLoading;
+
   return (
     <Box
       height='100vh'
@@ -33,9 +36,9 @@ export const App = () => {
       <ContactForm />
       <h2>Contact</h2>
       <Filter />
-      {isLoading && <p>Hello</p>}
+      {isLoading && <Loader/>}
       {error && <p>{error}</p>}
-      {contacts.length > 0 && !error && <ContactList />}
+      {loadingContacts && <ContactList />}
       
       <ToastContainer
          position="top-center"

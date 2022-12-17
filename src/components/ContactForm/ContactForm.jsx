@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectContacts } from "redux/contacts/selectors";
 import { FormContacts, Field, NameField, ButtonAdd } from './ContactForm.styled';
 import { addContact } from "redux/contacts/operations";
-
+import { toast } from "react-toastify";
 
 const ContactForm = () => {
     const dispatch = useDispatch();
+    const contacts = useSelector(selectContacts);
     const { register, handleSubmit, reset } = useForm({
     defaultValues: {
         name: '',
@@ -14,6 +16,18 @@ const ContactForm = () => {
     
     const onSubmit = values => {
         const { name, number } = values;
+
+        const isContact = contacts.find(contact => (
+                contact.name === name ||
+                contact.number === number
+        ));
+
+        if (isContact) {
+            toast.warning("There is already a contact or a number");
+            reset();
+            return; 
+        }
+
         dispatch(addContact({name, number}))
         reset();
     }

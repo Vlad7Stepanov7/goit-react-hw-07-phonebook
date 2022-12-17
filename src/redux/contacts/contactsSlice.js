@@ -12,6 +12,7 @@ const handlePending = state => {
 }
 
 const handleRejected = (state, action) => {
+    console.log(state.contacts);
      return {
                 contacts: [...state.contacts],
                 isLoading: false,
@@ -19,45 +20,44 @@ const handleRejected = (state, action) => {
            }
 }
 
+    
 const contactsSlice = createSlice({
     name: "contacts",
     initialState: {
         contacts: [],
         isLoading: false,
         error: null
-    },
-    extraReducers: {
-        [fetchContacts.pending]: handlePending,
-        [fetchContacts.rejected]: handleRejected,
-        [addContact.pending]: handlePending,
-        [addContact.rejected]: handleRejected,
-        [deleteContact.pending]: handlePending,
-        [deleteContact.rejected]: handleRejected,
-        [fetchContacts.fulfilled](_, action) {
-            return {
+        },
+    extraReducers: (builder) =>
+        builder
+        .addCase(fetchContacts.pending, (state, action) => handlePending(state))
+            .addCase(fetchContacts.fulfilled, (state, action) => {
+             return {
                 contacts: [...action.payload],
                 isLoading: false,
                 error: null
             }
-        },
-        [addContact.fulfilled](state, action) {
+        })
+        .addCase(fetchContacts.rejected, (state, action) => handleRejected(state, action))
+        .addCase(addContact.pending, (state, action) => handlePending(state))
+            .addCase(addContact.fulfilled, (state, action) => {
             return {
                 contacts: [...state.contacts, action.payload],
                 isLoading: false,
                 error: null
             }
-        },
-        [deleteContact.fulfilled](state, action) {
-            const updatedContacts = state.contacts.filter(contact => contact.id !== action.payload);
-            console.log()
-            return {
-                contacts: [...updatedContacts],
-                isLoading: false,
-                error: null
-            }
-        }
-        
-    }
+        })
+        .addCase(addContact.rejected, (state, action) => handleRejected(state, action))
+        .addCase(deleteContact.pending, (state, action) => handlePending(state))
+            .addCase(deleteContact.fulfilled, (state, action) => {    
+              state.isLoading = false;
+              state.error = null;
+              const index = state.contacts.findIndex(
+              task => task.id === action.payload.id
+              );
+             state.contacts.splice(index, 1);
+        })
+        .addCase(deleteContact.rejected, (state, action) => handleRejected(state, action))
 })
 
 const persistConfig = {
