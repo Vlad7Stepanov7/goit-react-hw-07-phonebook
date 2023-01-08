@@ -1,13 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { selectContacts } from "redux/contacts/selectors";
 import { FormContacts, Field, NameField, ButtonAdd } from './ContactForm.styled';
-import { addContact } from "redux/contacts/operations";
 import { toast } from "react-toastify";
+import { useAddContactMutation } from "redux/contacts/contactsAPI";
 
-const ContactForm = () => {
-    const dispatch = useDispatch();
-    const contacts = useSelector(selectContacts);
+const ContactForm = ({ contacts }) => {
+    const [addContact] = useAddContactMutation();
     const { register, handleSubmit, reset } = useForm({
     defaultValues: {
         name: '',
@@ -27,8 +24,8 @@ const ContactForm = () => {
             reset();
             return; 
         }
-
-        dispatch(addContact({name, number}))
+       
+        addContact({ name, number });
         reset();
     }
     

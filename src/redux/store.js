@@ -7,20 +7,19 @@ import {
   PERSIST,
   PURGE,
   REGISTER, } from "redux-persist";
-import { contactsReducer } from "./contacts/contactsSlice";
 import { filterReducer } from "./filter/filterSlice";
+import { contactsAPI } from "./contacts/contactsAPI";
 
 export const store = configureStore({
     reducer: {
-        contacts: contactsReducer,
+        [contactsAPI.reducerPath]: contactsAPI.reducer,
         filter: filterReducer
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
+    middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             },
-        })
+        }), contactsAPI.middleware],
 })
 
 export const persistor = persistStore(store);

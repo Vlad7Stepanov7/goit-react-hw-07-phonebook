@@ -1,13 +1,9 @@
 import { ListItem, ButtonDelete, TextContact } from './ContactList.styled';
-import { selectContacts } from 'redux/contacts/selectors';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contacts/operations';
+import { useSelector } from 'react-redux';
 
-const ContactList = () => {
-  const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
+const ContactList = ({contacts, deleteContact}) => {
   const filterValue = useSelector(state => state.filter.filter);
-  
+
   const filterContacts = filterValue === "" ? contacts :
     contacts.filter(contact => {
       return contact.name.toLowerCase().includes(filterValue.toLowerCase())
@@ -19,7 +15,7 @@ const ContactList = () => {
         return (
           <ListItem key={id}>
             <TextContact>{name}: {number}</TextContact>
-            <ButtonDelete type="button" onClick={() => dispatch(deleteContact(id))}>Delete</ButtonDelete>
+            <ButtonDelete type="button" onClick={() => deleteContact(id)}>Delete</ButtonDelete>
           </ListItem>
         )
        })}

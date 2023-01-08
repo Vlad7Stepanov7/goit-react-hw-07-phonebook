@@ -1,27 +1,25 @@
 import Box from "./utils/Box";
 import ContactForm from "components/ContactForm/ContactForm";
-import ContactList from "./components/ContactList/ContactList";
-import Filter from "./components/Filter/Filter";
+import ContactList from "components/ContactList/ContactList";
+import Filter from "components/Filter/Filter";
 import Loader from "components/Loader/Loader";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchContacts } from "redux/contacts/operations";
-import { selectContacts, selectError, selectIsLoading } from "redux/contacts/selectors";
+import { toast } from "react-toastify";
+import { useGetContactsQuery, useDeleteContactMutation } from "redux/contacts/contactsAPI";
 
 export const App = () => {
-  const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch])
-
-  const loadingContacts = contacts && !error && !isLoading;
-
+  const [deleteContact, { isLoading: isDeleting }] = useDeleteContactMutation();
+  const { data: contacts, error, isFetching } = useGetContactsQuery();
+  
+  const isShow = contacts && !error && !isFetching && !isDeleting;
+  const isLoader = isFetching || isDeleting;
+  
+  const notificationError = (error) => {
+      console.log(error);
+      toast.error(error.error)
+  };
+  
   return (
     <Box
       height='100vh'
@@ -33,12 +31,12 @@ export const App = () => {
       color='#010101'
     >
       <h1>Phonebook</h1>
-      <ContactForm />
+      <ContactForm contacts={contacts}/>
       <h2>Contact</h2>
       <Filter />
-      {isLoading && <Loader/>}
-      {error && <p>{error}</p>}
-      {loadingContacts && <ContactList />}
+      {isLoader && <Loader/>}
+      {error && notificationError(error)}
+      {isShow && <ContactList contacts={contacts} deleteContact={deleteContact} />} 
       
       <ToastContainer
          position="top-center"
